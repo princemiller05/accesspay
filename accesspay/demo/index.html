@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%231a3fa0%27/%3E%3Cpath d=%27M7 11h18v3H7zm0 6h10v3H7z%27 fill=%27white%27/%3E%3C/svg%3E" />
+  <title>Checkout – AccessPay demo</title>
+  <meta name="description" content="Demo of AccessPay, an open-source accessible checkout component kit (WCAG 2.2 AA)." />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to checkout</a>
+
+  <div class="demo-banner" role="note">
+    <strong>Demo only.</strong> Do not enter real card details. Use a test card below. No real money moves.
+  </div>
+
+  <header class="site-header">
+    <p class="logo">Chai &amp; Co. <span class="logo-sub">(a fictional store)</span></p>
+    <nav aria-label="Project">
+      <ul class="nav-links">
+        <li><a href="/docs/">For developers</a></li>
+        <li><a href="/dashboard/">Merchant dashboard</a></li>
+        <li><a href="https://github.com/princemiller05/accesspay">Source on GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main" class="layout">
+
+    <section class="pay" aria-labelledby="pay-title">
+      <h1 id="pay-title">Pay by card</h1>
+      <p class="pay-intro">All fields are required. Need a card to try? <a href="#test-cards">See test card numbers</a>.</p>
+
+      <ap-checkout-form id="checkout">
+        <form>
+          <ap-text-field name="cardholder" label="Name on card" autocomplete="cc-name"
+            error-message="Enter the name as it appears on your card"></ap-text-field>
+          <ap-card-number name="cardNumber"></ap-card-number>
+          <div class="ap-row">
+            <ap-expiry name="expiry"></ap-expiry>
+            <ap-cvv name="cvv"></ap-cvv>
+          </div>
+          <button type="submit" class="ap-pay-button">Pay ₹2,499</button>
+        </form>
+      </ap-checkout-form>
+
+      <div id="confirmation" class="confirmation" hidden>
+        <h2 id="confirmation-title" tabindex="-1">Payment approved</h2>
+        <p id="confirmation-text"></p>
+        <p id="webhook-status" class="webhook-status" role="status"></p>
+        <button type="button" id="restart" class="ap-pay-button">Start again</button>
+      </div>
+    </section>
+
+    <section class="order" aria-labelledby="order-title">
+      <h2 id="order-title">Your order</h2>
+      <ul class="order-items">
+        <li><span>Masala chai, 250 g</span><span>₹449</span></li>
+        <li><span>Hand-painted kulhad set (×4)</span><span>₹1,650</span></li>
+        <li><span>Delivery</span><span>₹400</span></li>
+      </ul>
+      <p class="order-total"><span>Total</span><span>₹2,499</span></p>
+
+      <details class="test-cards" id="test-cards">
+        <summary>Test card numbers</summary>
+        <ul>
+          <li><code>4111 1111 1111 1111</code> Visa: asks for OTP, then approved</li>
+          <li><code>4242 4242 4242 4242</code> Visa: approved without OTP</li>
+          <li><code>5555 5555 5555 4444</code> Mastercard: OTP</li>
+          <li><code>6080 3200 0000 0002</code> RuPay: OTP</li>
+          <li><code>3782 822463 10005</code> American Express: no OTP</li>
+          <li><code>4000 0000 0000 0002</code> Declined</li>
+          <li><code>4000 0000 0000 9995</code> Declined: insufficient funds</li>
+        </ul>
+        <p>Use any future expiry date and any security code of the right length.</p>
+      </details>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>AccessPay is an open-source accessibility project. Card network names are trademarks of their owners; no affiliation is implied.</p>
+  </footer>
+
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+{
+  "name": "accesspay",
+  "version": "0.2.0",
+  "description": "Accessible (WCAG 2.2 AA) checkout components and the mock payment gateway behind them",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "server": "node server/main.ts",
+    "start": "node server/main.ts",
+    "build": "vite build",
+    "build:lib": "vite build --mode lib",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "lhci": "lhci autorun"
+  },
+  "keywords": [
+    "accessibility",
+    "a11y",
+    "wcag",
+    "checkout",
+    "payments",
+    "web-components"
+  ],
+  "author": "Prince Verma",
+  "license": "MIT",
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@lhci/cli": "^0.16.1",
+    "@playwright/test": "^1.65.0",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.6",
+    "@types/pg": "^8.23.1",
+    "jsdom": "^31.0.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/princemiller05/accesspay"
+  },
+  "module": "./dist-lib/accesspay.js",
+  "files": [
+    "dist-lib",
+    "src/styles"
+  ],
+  "dependencies": {
+    "@electric-sql/pglite": "^0.5.16",
+    "express": "^5.3.0",
+    "pg": "^8.23.1"
+  },
+  "engines": {
+    "node": ">=22.18"
+  }
+}

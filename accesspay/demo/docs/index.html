@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%231a3fa0%27/%3E%3Cpath d=%27M7 11h18v3H7zm0 6h10v3H7z%27 fill=%27white%27/%3E%3C/svg%3E" />
+  <title>Docs – AccessPay</title>
+  <meta name="description" content="Add AccessPay test payments to your website with a payment link or a checkout session." />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <p class="logo">AccessPay <span class="logo-sub">docs</span></p>
+    <nav aria-label="Site">
+      <ul class="nav-links">
+        <li><a href="/dashboard/#signup">Create account</a></li>
+        <li><a href="/dashboard/">Dashboard</a></li>
+        <li><a href="/">Demo shop</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="docs">
+    <nav aria-label="On this page" class="toc">
+      <h2 id="toc-title">On this page</h2>
+      <ol>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#links">Option 1: Payment link (no code)</a></li>
+        <li><a href="#sessions">Option 2: Checkout session</a></li>
+        <li><a href="#webhooks">Webhooks</a></li>
+        <li><a href="#test-cards">Test cards</a></li>
+        <li><a href="#api">API reference</a></li>
+        <li><a href="#security">Security notes</a></li>
+      </ol>
+    </nav>
+
+    <main id="main">
+      <h1>Accept payments on your website</h1>
+      <p class="lead">AccessPay gives your site an accessible, hosted checkout page. You don't build a card form, and card details never touch your server. <strong>Test mode only:</strong> no real money moves.</p>
+
+      <h2 id="how">How it works</h2>
+      <ol>
+        <li><a href="/dashboard/#signup">Create a test account</a> and enter your website address. You get API keys.</li>
+        <li>Your "Pay" button sends the customer to an AccessPay checkout page.</li>
+        <li>They pay there, including the bank's OTP step if needed.</li>
+        <li>We send them back to your website, and notify your server with a signed webhook.</li>
+      </ol>
+      <div class="callout" role="note">
+        <strong>Why can't the price just be in my button's HTML?</strong> Anyone can edit a web page in their browser and change ₹299 to ₹1. The price must come from your dashboard (payment links) or your server (checkout sessions).
+      </div>
+
+      <h2 id="links">Option 1: Payment link (no code)</h2>
+      <p>Best for a fixed product or a simple "Pay" button.</p>
+      <ol>
+        <li>In the dashboard, open <a href="/dashboard/#links">Payment links</a> and create a link with a product name and price.</li>
+        <li>Optionally, set where customers go after paying (a page on your website).</li>
+        <li>Copy the link and use it as your button's address:</li>
+      </ol>
+      <pre class="code" tabindex="0" role="region" aria-label="Code example"><code>&lt;a href="<span class="base">https://accesspay.example</span>/l/plink_…" class="buy-button"&gt;
+  Buy now – ₹299
+&lt;/a&gt;</code></pre>
+      <p>Each click opens a fresh checkout, so one link can be paid many times.</p>
+
+      <h2 id="sessions">Option 2: Checkout session (a few lines of server code)</h2>
+      <p>Best when the amount changes, like a shopping cart. Your <strong>server</strong> creates a session with your secret key, then redirects the customer to its <code>url</code>.</p>
+      <h3>Node.js (Express)</h3>
+      <pre class="code" tabindex="0" role="region" aria-label="Code example"><code>app.post('/checkout', async (req, res) => {
+  const order = await createOrderFromCart(req);   // your code: total in paise
+
+  const response = await fetch('<span class="base">https://accesspay.example</span>/v1/checkout/sessions', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${process.env.ACCESSPAY_SECRET_KEY}`,
+      'Content-Type': 'application/json',
+      'Idempotency-Key': `checkout-${order.id}`,     // safe to retry
+    },
+    body: JSON.stringify({
+      name: `Order #${order.id}`,
+      amount: order.totalPaise,                      // ₹299 = 29900
+      currency: 'inr',
+      success_url: 'https://myshop.com/thank-you',   // must be on your website
+      cancel_url: 'https://myshop.com/cart',
+    }),
+  });
+  const session = await response.json();
+  res.redirect(303, session.url);
+});</code></pre>
+      <h3>curl</h3>
+      <pre class="code" tabindex="0" role="region" aria-label="Code example"><code>curl <span class="base">https://accesspay.example</span>/v1/checkout/sessions \
+  -H "Authorization: Bearer sk_test_…" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Order #1042","amount":29900,"currency":"inr",
+       "success_url":"https://myshop.com/thank-you"}'</code></pre>
+      <p>After paying, the customer lands on <code>success_url?session_id=cs_…</code>. Don't treat that visit as proof of payment (anyone can type a URL). Confirm with a webhook, or fetch <code>GET /v1/checkout/sessions/cs_…</code> and check <code>payment_status</code>.</p>
+      <p>Sessions expire after 30 minutes.</p>
+
+      <h2 id="webhooks">Webhooks</h2>
+      <p>Set a webhook URL in <a href="/dashboard/#developers">Developers</a>. We POST events such as <code>checkout.session.completed</code>, <code>payment_intent.succeeded</code> and <code>refund.created</code>, and retry failed deliveries.</p>
+      <p>Every request has an <code>AccessPay-Signature: t=…,v1=…</code> header: an HMAC-SHA256 of <code>"&lt;t&gt;.&lt;raw body&gt;"</code> using your webhook signing secret. Always check it:</p>
+      <pre class="code" tabindex="0" role="region" aria-label="Code example"><code>import crypto from 'node:crypto';
+
+app.post('/webhooks/accesspay', express.raw({ type: 'application/json' }), (req, res) => {
+  const header = req.get('AccessPay-Signature') ?? '';
+  const { t, v1 } = Object.fromEntries(header.split(',').map((p) => p.split('=')));
+  const expected = crypto.createHmac('sha256', process.env.ACCESSPAY_WEBHOOK_SECRET)
+    .update(`${t}.${req.body}`).digest('hex');
+
+  const fresh = Math.abs(Date.now() / 1000 - Number(t)) &lt; 300;   // reject replays
+  const valid = v1 &amp;&amp; v1.length === expected.length &amp;&amp;
+    crypto.timingSafeEqual(Buffer.from(v1), Buffer.from(expected));
+  if (!fresh || !valid) return res.status(400).end();
+
+  const event = JSON.parse(req.body);
+  if (event.type === 'checkout.session.completed') {
+    markOrderPaid(event.data.object.id);   // your code
+  }
+  res.json({ received: true });             // reply quickly with 2xx
+});</code></pre>
+
+      <h2 id="test-cards">Test cards</h2>
+      <div class="table-wrap" role="region" aria-labelledby="cards-caption" tabindex="0">
+        <table class="payments">
+          <caption id="cards-caption">Use any future expiry date and any security code</caption>
+          <thead><tr><th scope="col">Card number</th><th scope="col">Result</th></tr></thead>
+          <tbody>
+            <tr><td><code>4111 1111 1111 1111</code></td><td>Asks for OTP (shown on screen in test mode), then approved</td></tr>
+            <tr><td><code>4242 4242 4242 4242</code></td><td>Approved without OTP</td></tr>
+            <tr><td><code>5555 5555 5555 4444</code></td><td>Mastercard, OTP</td></tr>
+            <tr><td><code>6080 3200 0000 0002</code></td><td>RuPay, OTP</td></tr>
+            <tr><td><code>4000 0000 0000 0002</code></td><td>Declined</td></tr>
+            <tr><td><code>4000 0000 0000 9995</code></td><td>Declined: insufficient funds</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="api">API reference</h2>
+      <p>Base URL: <code class="base">https://accesspay.example</code>. Send <code>Authorization: Bearer sk_test_…</code>. Amounts are integers in paise.</p>
+      <div class="table-wrap" role="region" aria-labelledby="api-caption" tabindex="0">
+        <table class="payments">
+          <caption id="api-caption">Endpoints</caption>
+          <thead><tr><th scope="col">Endpoint</th><th scope="col">What it does</th></tr></thead>
+          <tbody>
+            <tr><td><code>POST /v1/checkout/sessions</code></td><td>Create a hosted checkout. Body: <code>name, amount, currency, success_url?, cancel_url?, capture_method?</code></td></tr>
+            <tr><td><code>GET /v1/checkout/sessions/:id</code></td><td>Check <code>status</code> (open/complete/expired) and <code>payment_status</code> (unpaid/authorized/paid)</td></tr>
+            <tr><td><code>POST /v1/payment_links</code></td><td>Create a payment link. Body: <code>name, amount, success_url?</code></td></tr>
+            <tr><td><code>GET /v1/payment_intents</code></td><td>List payments</td></tr>
+            <tr><td><code>POST /v1/payment_intents/:id/capture</code></td><td>Capture an authorised payment (when <code>capture_method</code> is <code>manual</code>)</td></tr>
+            <tr><td><code>POST /v1/refunds</code></td><td>Refund all or part of a payment. Body: <code>payment_intent, amount?</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Add an <code>Idempotency-Key</code> header to POSTs so retries can't create duplicates. Errors look like <code>{"error": {"type", "code", "message", "param"}}</code>.</p>
+
+      <h2 id="security">Security notes</h2>
+      <ul>
+        <li><strong>Keep your secret key on your server.</strong> If it leaks, create a new one in Developers; the old one stops working at once.</li>
+        <li>Customers are only redirected to pages on the website in your settings.</li>
+        <li>Webhook URLs must be public HTTPS addresses.</li>
+        <li>We never store card numbers or security codes.</li>
+      </ul>
+    </main>
+  </div>
+  <script type="module" src="./docs.ts"></script>
+</body>
+</html>

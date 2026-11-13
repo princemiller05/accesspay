@@ -1,0 +1,21 @@
+# Render Blueprint: one free web service runs the gateway API, demo shop,
+# merchant dashboard and the built frontend.
+# Deploy: Render dashboard -> New -> Blueprint -> pick this repo.
+services:
+  - type: web
+    name: accesspay
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: APP_SECRET
+        generateValue: true
+      # Optional: set DATABASE_URL to a hosted Postgres (e.g. Neon free tier) to keep
+      # data across restarts. Without it, an in-memory embedded Postgres is used and
+      # the demo data resets whenever the free instance sleeps.

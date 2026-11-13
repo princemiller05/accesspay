@@ -1,0 +1,85 @@
+/* Demo page only. Not part of the library. */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: var(--ap-font);
+  color: var(--ap-text);
+  background: var(--ap-bg);
+  line-height: 1.5;
+}
+a { color: var(--ap-accent); }
+
+.skip-link {
+  position: absolute;
+  left: 0.5rem; top: -4rem;
+  padding: 0.5rem 1rem;
+  background: var(--ap-focus);
+  color: var(--ap-focus-inner);
+  font-weight: 700;
+  z-index: 10;
+}
+.skip-link:focus { top: 0.5rem; outline: 3px solid var(--ap-focus-inner); }
+
+.demo-banner {
+  padding: 0.6rem 1rem;
+  background: #fff4d6;
+  color: #3d2c00;
+  border-bottom: 2px solid #8a6100;
+  text-align: center;
+}
+@media (prefers-color-scheme: dark) {
+  .demo-banner { background: #3a2f12; color: #ffe8a8; border-color: #c99a2e; }
+}
+
+.site-header, .site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  max-width: 68rem;
+  margin: 0 auto;
+  padding: 1rem 1.25rem;
+}
+.logo { margin: 0; font-size: 1.25rem; font-weight: 800; }
+.logo-sub { font-weight: 400; font-size: 0.875rem; color: var(--ap-muted); }
+.site-footer { color: var(--ap-muted); font-size: 0.875rem; border-top: 1px solid var(--ap-border); margin-top: 3rem; }
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2rem;
+  max-width: 68rem;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+@media (min-width: 52rem) {
+  .layout { grid-template-columns: minmax(0, 1fr) minmax(0, 20rem); }
+}
+
+.order {
+  align-self: start;
+  padding: 1.25rem;
+  background: var(--ap-surface);
+  border-radius: var(--ap-radius);
+}
+.order h2 { margin-top: 0; font-size: 1.25rem; }
+.order-items { list-style: none; margin: 0; padding: 0; }
+.order-items li, .order-total {
+  display: flex; justify-content: space-between; gap: 1rem;
+  padding: 0.4rem 0;
+}
+.order-total { margin: 0.5rem 0 0; border-top: 2px solid var(--ap-border); font-weight: 800; font-size: 1.125rem; }
+.test-cards { margin-top: 1rem; }
+.test-cards summary { cursor: pointer; font-weight: 600; min-height: 1.5rem; }
+.test-cards code { font-size: 0.95em; white-space: nowrap; }
+
+.pay h1 { margin: 0 0 0.25rem; font-size: 1.75rem; }
+.pay-intro { margin: 0 0 1.5rem; color: var(--ap-muted); }
+
+.confirmation h2 { font-size: 1.5rem; }
+.confirmation h2:focus-visible { outline: 3px solid var(--ap-focus); }
+
+.nav-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; list-style: none; margin: 0; padding: 0; }
+.test-cards li { margin-bottom: 0.35rem; }
+.webhook-status { color: var(--ap-muted); font-size: 0.9375rem; }

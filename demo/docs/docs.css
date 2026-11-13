@@ -1,0 +1,22 @@
+.docs { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; max-width: 68rem; margin: 0 auto; padding: 0 1.25rem 3rem; }
+@media (min-width: 60rem) {
+  .docs { grid-template-columns: 14rem minmax(0, 1fr); }
+  .toc { position: sticky; top: 1rem; align-self: start; }
+}
+.toc h2 { font-size: 1rem; margin: 0.5rem 0; }
+.toc ol { margin: 0; padding-left: 1.25rem; }
+.toc li { margin: 0.35rem 0; }
+.docs main h1 { font-size: 2rem; margin: 0.5rem 0; }
+.docs main h2 { margin-top: 2.5rem; scroll-margin-top: 1rem; }
+.lead { font-size: 1.125rem; }
+.code { padding: 0.9rem 1rem; overflow-x: auto; background: var(--ap-surface); border: 1px solid var(--ap-border); border-radius: var(--ap-radius); font-size: 0.9rem; line-height: 1.45; }
+.callout { margin: 1.25rem 0; padding: 0.9rem 1rem; border-left: 5px solid var(--ap-accent); background: var(--ap-surface); }
+.docs code { overflow-wrap: anywhere; }
+.table-wrap { position: relative; overflow-x: auto; border: 1px solid var(--ap-border); border-radius: var(--ap-radius); }
+.payments { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
+.payments caption { text-align: left; padding: 0.75rem; font-weight: 600; }
+.payments th, .payments td { padding: 0.6rem 0.75rem; text-align: left; vertical-align: top; border-top: 1px solid var(--ap-border); }
+.payments th { background: var(--ap-surface); }
+.table-wrap:focus-visible { outline: 3px solid var(--ap-focus); }
+
+.code:focus-visible { outline: 3px solid var(--ap-focus); }
