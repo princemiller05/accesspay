@@ -20,3 +20,7 @@
 .table-wrap:focus-visible { outline: 3px solid var(--ap-focus); }
 
 .code:focus-visible { outline: 3px solid var(--ap-focus); }
+
+.docs main { background: var(--ap-bg); border-radius: var(--ap-radius-lg); padding: clamp(1.25rem, 4vw, 2.5rem); box-shadow: 0 1px 2px rgb(6 59 55 / 0.06); }
+.code, .table-wrap { border-color: var(--ap-hairline); }
+.callout { border-radius: 0; background: var(--ap-accent-soft); }

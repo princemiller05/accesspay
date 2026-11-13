@@ -20,7 +20,14 @@ export interface TestServer {
 /** Fresh in-memory database + server on a random port for every test file. */
 export async function startServer(): Promise<TestServer> {
   const cfg = loadConfig({ NODE_ENV: 'test' } as NodeJS.ProcessEnv);
-  const db = await connect({});
+  // TEST_DATABASE_URL runs the suite against real PostgreSQL (fresh schema per file).
+  const pgUrl = process.env.TEST_DATABASE_URL;
+  if (pgUrl) {
+    const reset = await connect({ databaseUrl: pgUrl });
+    await reset.query('DROP SCHEMA public CASCADE; CREATE SCHEMA public;');
+    await reset.close();
+  }
+  const db = await connect(pgUrl ? { databaseUrl: pgUrl } : {});
   let url = '';
   const { app, webhooks } = createApp({ db, cfg, gatewayUrl: () => url, webhookRetryDelaysMs: [0, 10, 20] });
   const server: Server = await new Promise((resolve) => {

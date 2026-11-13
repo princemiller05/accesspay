@@ -101,7 +101,9 @@ export class ApCheckoutForm extends HTMLElement {
     try {
       let pi = await client.confirm(id, clientSecret, this.readCard());
       if (pi.status === 'requires_action' && pi.next_action?.type === 'otp') {
+        this.emitStep('otp');
         const outcome = await this.runOtp(client, id, clientSecret, pi.next_action.otp.test_code);
+        if (outcome.result !== 'verified') this.emitStep('card');
         if (outcome.result === 'canceled') {
           this.showPaymentError('You cancelled the payment. You have not been charged. You can try again.', 'Payment cancelled');
           return null;
@@ -125,6 +127,11 @@ export class ApCheckoutForm extends HTMLElement {
       this.showSummary('Your payment was not completed', [{ message, field: field ?? undefined }]);
       return null;
     }
+  }
+
+  /** Tells the page which step the customer is on ("card" | "otp"), e.g. to update a step indicator. */
+  private emitStep(step: 'card' | 'otp') {
+    this.dispatchEvent(new CustomEvent('ap-step', { detail: { step }, bubbles: true }));
   }
 
   private async runOtp(client: GatewayClient, id: string, clientSecret: string, testCode?: string) {

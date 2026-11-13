@@ -4,21 +4,40 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%231a3fa0%27/%3E%3Cpath d=%27M7 11h18v3H7zm0 6h10v3H7z%27 fill=%27white%27/%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%23063b37%27/%3E%3Cpath d=%27M7 11h18v3H7zm0 6h10v3H7z%27 fill=%27%2399f6e4%27/%3E%3C/svg%3E" />
   <title>Checkout – AccessPay</title>
 </head>
-<body>
-  <a class="skip-link" href="#main">Skip to payment</a>
-  <div class="demo-banner" role="note">
-    <strong>Test mode.</strong> Use a test card such as <code>4111 1111 1111 1111</code>. No real money moves.
+<body class="ground">
+  <a class="skip-link" href="#pay-card">Skip to payment form</a>
+  <div class="cb">
+    <header class="cb-side" id="side">
+      <div class="cb-top">
+        <p class="logo"><span class="logo-mark" aria-hidden="true">A</span>AccessPay <span class="logo-sub">checkout</span></p>
+        <span class="tag">Test mode</span>
+      </div>
+      <div id="summary"></div>
+      <ol class="steps" aria-label="Payment steps" id="steps" hidden>
+        <li data-step="card" aria-current="step"><span class="num" aria-hidden="true">1</span>Card</li>
+        <li data-step="otp"><span class="num" aria-hidden="true">2</span>Bank OTP</li>
+        <li data-step="done"><span class="num" aria-hidden="true">3</span>Done</li>
+      </ol>
+      <p class="secure">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>
+        Card details go directly to AccessPay and are never shared with the shop.
+      </p>
+    </header>
+    <main id="main" class="cb-main">
+      <p class="test-note" role="note">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg>
+        <span><strong>Test mode.</strong> Don't enter real card details. No real money moves. Try card 4111 1111 1111 1111.</span>
+      </p>
+      <section class="pay-card" id="pay-card" aria-labelledby="pay-title">
+        <p id="loading" role="status">Loading checkout…</p>
+        <div id="content"></div>
+      </section>
+      <p class="pay-footer">Payments processed by AccessPay in test mode.</p>
+    </main>
   </div>
-  <main id="main" class="pay-page">
-    <p id="loading" class="pay-status" role="status">Loading checkout…</p>
-    <div id="content"></div>
-  </main>
-  <footer class="pay-footer">
-    <p>Payments processed by AccessPay (test mode). Card details go directly to AccessPay and are never shared with the shop.</p>
-  </footer>
   <script type="module" src="./pay.ts"></script>
 </body>
 </html>

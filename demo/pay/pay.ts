@@ -1,9 +1,12 @@
 // Styles are imported here (not <link>ed) so Vite finds them in dev and production.
+import '../fonts.ts';
 import '../../src/styles/accesspay.css';
 import '../demo.css';
 import './pay.css';
 import '../../src/index.ts';
 import { GatewayClient, type ApCheckoutForm } from '../../src/index.ts';
+import { attachGlow } from '../glow.ts';
+import { setStep } from '../steps.ts';
 
 /**
  * Hosted checkout page: /pay/?s=cs_…
@@ -25,6 +28,8 @@ interface PublicSession {
 }
 
 const content = document.getElementById('content')!;
+const summary = document.getElementById('summary')!;
+const steps = document.getElementById('steps')!;
 const loading = document.getElementById('loading')!;
 const inr = (paise: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(paise / 100);
 
@@ -37,7 +42,7 @@ function el<K extends keyof HTMLElementTagNameMap>(tag: K, props: Partial<HTMLEl
 
 function showMessage(title: string, text: string, link?: { href: string; label: string }) {
   loading.remove();
-  const h1 = el('h1', { tabIndex: -1 }, title);
+  const h1 = el('h1', { tabIndex: -1, id: 'pay-title' }, title);
   content.replaceChildren(el('div', { className: 'pay-receipt' }, h1, el('p', {}, text), ...(link ? [el('p', {}, el('a', { href: link.href }, link.label))] : [])));
   document.title = `${title} – AccessPay`;
   h1.focus();
@@ -68,7 +73,7 @@ async function start() {
   form.innerHTML = `
     <form>
       <ap-text-field name="cardholder" label="Name on card" autocomplete="cc-name" error-message="Enter the name as it appears on your card"></ap-text-field>
-      <ap-card-number name="cardNumber"></ap-card-number>
+      <ap-card-number name="cardNumber" logo-base="/networks/"></ap-card-number>
       <div class="ap-row">
         <ap-expiry name="expiry"></ap-expiry>
         <ap-cvv name="cvv"></ap-cvv>
@@ -76,11 +81,19 @@ async function start() {
       <button type="submit" class="ap-pay-button">Pay ${inr(s.amount)}</button>
     </form>`;
 
+  // Left panel: who you're paying and how much (all merchant text via textContent).
+  const [rupees, paise] = inr(s.amount).split('.');
+  summary.replaceChildren(
+    ...(back ? [el('a', { className: 'back', href: back.href }, `‹ ${back.label}`)] : []),
+    el('p', { className: 'kicker' }, `You're paying ${s.merchant_name}`),
+    el('p', { className: 'big-amount' }, rupees, el('span', { className: 'paise' }, `.${paise ?? '00'}`)),
+    el('p', { className: 'item-name' }, s.name),
+  );
+  steps.hidden = false;
+
   content.replaceChildren(
-    ...(back ? [el('a', { className: 'pay-back', href: back.href }, `← ${back.label}`)] : []),
-    el('p', { className: 'pay-merchant' }, s.merchant_name),
-    el('h1', {}, s.name),
-    el('p', { className: 'pay-amount' }, el('span', { className: 'ap-visually-hidden' }, 'Amount: '), inr(s.amount)),
+    el('h1', { id: 'pay-title' }, s.name),
+    el('p', { className: 'pay-intro' }, 'Pay securely with your card. All fields are required.'),
     form,
   );
 
@@ -90,6 +103,7 @@ async function start() {
       const client = new GatewayClient({ publishableKey: s.publishable_key });
       const pi = await form.confirmPayment({ client, paymentIntent: s.payment_intent, clientSecret: s.client_secret! });
       if (!pi) return;
+      setStep('done');
       if (s.success_url) {
         form.announce(`Payment successful. Returning to ${s.merchant_name}`);
         location.replace(s.success_url);
@@ -103,3 +117,5 @@ async function start() {
 }
 
 start().catch(() => showMessage('Something went wrong', 'We could not load this checkout. Check your connection and try again.'));
+
+attachGlow(document.querySelector<HTMLElement>('.cb-side'));

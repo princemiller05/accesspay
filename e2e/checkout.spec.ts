@@ -76,7 +76,7 @@ test('completes checkout with OTP using only the keyboard', async ({ page }, tes
   test.skip(testInfo.project.name === 'mobile', 'keyboard-only flow is a desktop scenario');
   // Skip link is the first tab stop
   await page.keyboard.press('Tab');
-  await expect(page.getByRole('link', { name: 'Skip to checkout' })).toBeFocused();
+  await expect(page.getByRole('link', { name: 'Skip to payment form' })).toBeFocused();
   await page.keyboard.press('Enter');
 
   // Tab into the first field

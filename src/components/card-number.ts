@@ -54,6 +54,29 @@ export class ApCardNumber extends ApField {
     this.wrap.append(this.badge);
   }
 
+  /**
+   * Shows the network as text, or as a logo when the page provides one:
+   *   <ap-card-number logo-base="/networks/"> looks for /networks/visa.svg etc.
+   * Logos are trademarks: use the official files from each network's brand site.
+   * The badge is visual only (aria-hidden); screen readers hear "Visa card detected".
+   */
+  private renderBadge(network: CardNetwork | null) {
+    this.badge.hidden = !network;
+    this.badge.dataset.network = network?.id ?? '';
+    this.badge.classList.remove('has-logo');
+    this.badge.textContent = network?.name ?? '';
+    const base = this.getAttribute('logo-base');
+    if (!network || !base) return;
+    const img = new Image();
+    img.alt = '';
+    img.onload = () => {
+      if (this.network?.id !== network.id) return; // the number changed meanwhile
+      this.badge.replaceChildren(img);
+      this.badge.classList.add('has-logo');
+    };
+    img.src = `${base}${network.id}.svg`; // on error: the text badge simply stays
+  }
+
   protected getError(): string | null {
     return validateCardNumber(this.value);
   }
@@ -79,9 +102,7 @@ export class ApCardNumber extends ApField {
   private setNetwork(network: CardNetwork | null): void {
     if (network?.id === this.network?.id) return;
     this.network = network;
-    this.badge.textContent = network?.name ?? '';
-    this.badge.hidden = !network;
-    this.badge.dataset.network = network?.id ?? '';
+    this.renderBadge(network);
     this.dispatchEvent(
       new CustomEvent<NetworkChangeDetail>('ap-network-change', {
         detail: { network },

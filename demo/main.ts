@@ -1,8 +1,11 @@
 // Styles are imported here (not <link>ed) so Vite finds them in dev and production.
+import './fonts.ts';
 import '../src/styles/accesspay.css';
 import './demo.css';
 import '../src/index.ts';
 import { GatewayClient, type ApCheckoutForm, type PaymentIntent } from '../src/index.ts';
+import { attachGlow } from './glow.ts';
+import { setStep } from './steps.ts';
 
 /**
  * The demo shop's checkout page. Flow:
@@ -13,6 +16,7 @@ import { GatewayClient, type ApCheckoutForm, type PaymentIntent } from '../src/i
  *  4. Show the result, then show the order status the shop learned via webhook.
  */
 const checkout = document.getElementById('checkout') as ApCheckoutForm;
+const formArea = document.getElementById('pay-form-area')!;
 const confirmation = document.getElementById('confirmation')!;
 const title = document.getElementById('confirmation-title')!;
 const text = document.getElementById('confirmation-text')!;
@@ -57,8 +61,9 @@ function showConfirmation(pi: PaymentIntent) {
     pi.status === 'requires_capture'
       ? `${amount} has been authorised on ${card}. You'll be charged when your order ships. This is a demo, so no real money moves.`
       : `${amount} paid with ${card}. This is a demo, so no real money moves.`;
-  checkout.hidden = true;
+  formArea.hidden = true;
   confirmation.hidden = false;
+  setStep('done');
   title.focus(); // move focus to the result so screen-reader users hear it
   void pollOrder();
 }
@@ -77,3 +82,5 @@ async function pollOrder() {
 }
 
 document.getElementById('restart')!.addEventListener('click', () => location.reload());
+
+attachGlow(document.querySelector<HTMLElement>('.cb-side'));

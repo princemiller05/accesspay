@@ -1,34 +1,39 @@
 /*
- * AccessPay styles. Theme with CSS custom properties, e.g.
- *   ap-checkout-form { --ap-accent: #0b5cad; }
- * All default colour pairs meet WCAG AA contrast (4.5:1 text, 3:1 UI).
+ * AccessPay styles: direction B ("bold fintech"), light theme.
+ * Theme with CSS custom properties, e.g.  :root { --ap-accent: #047857; }
+ * Every text/background pair meets WCAG AA (4.5:1), UI borders and focus
+ * rings meet 3:1 (WCAG 1.4.11). Ratios are noted next to each colour.
  */
 :root {
-  --ap-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --ap-text: #1b1b1f;          /* 16.9:1 on white */
-  --ap-muted: #4a4a55;         /* 8.6:1 on white  */
-  --ap-bg: #ffffff;
-  --ap-surface: #f5f6f8;
-  --ap-border: #6b6b78;        /* 5.2:1: input borders are UI components (WCAG 1.4.11) */
-  --ap-accent: #1a3fa0;        /* 8.9:1 on white  */
-  --ap-accent-text: #ffffff;
-  --ap-error: #b42318;         /* 6.4:1 on white  */
-  --ap-focus: #ffbf47;         /* yellow ring + dark outline: visible on any background */
-  --ap-focus-inner: #0b0c0c;
-  --ap-radius: 6px;
-}
+  --ap-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ap-display: "Space Grotesk", "Inter", system-ui, sans-serif;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --ap-text: #f1f1f4;
-    --ap-muted: #c3c3cc;
-    --ap-bg: #15161a;
-    --ap-surface: #1f2026;
-    --ap-border: #9a9aa8;
-    --ap-accent: #8fb0ff;
-    --ap-accent-text: #0b0c10;
-    --ap-error: #ff9b8f;
-  }
+  --ap-text: #0b1f1d;          /* 17.1:1 on white */
+  --ap-muted: #4a5a57;         /* 7.2:1 on white  */
+  --ap-bg: #fffdf8;            /* warm off-white cards */
+  --ap-ground: #f3efe5;        /* warm cream page background */
+  --ap-surface: #f6f2e8;       /* filled inputs */
+  --ap-border: #5b6b68;        /* 5.6:1 on white: input borders are UI components */
+  --ap-hairline: #e3dccb;      /* decorative dividers only */
+
+  --ap-brand: #063b37;         /* dark teal panel */
+  --ap-on-brand: #ffffff;      /* 12.9:1 on brand */
+  --ap-on-brand-muted: #ccfbf1;/* 10.9:1 on brand */
+  --ap-brand-link: #99f6e4;    /* 10.2:1 on brand */
+
+  --ap-accent: #0f766e;        /* 5.5:1 on white: buttons, active borders */
+  --ap-accent-hover: #115e59;
+  --ap-accent-text: #ffffff;   /* 5.5:1 on accent */
+  --ap-accent-soft: #e3f3ee;
+  --ap-warm: #f2b45a;           /* saffron accent: 6.8:1 on brand */
+  --ap-warm-soft: #fbecd2;
+
+  --ap-error: #b42318;         /* 6.4:1 on white */
+  --ap-focus: #0f766e;         /* focus ring on light surfaces: 5.5:1 */
+  --ap-focus-on-brand: #99f6e4;/* focus ring on the dark panel: 10.2:1 */
+
+  --ap-radius: 12px;
+  --ap-radius-lg: 20px;
 }
 
 .ap-visually-hidden {
@@ -50,24 +55,24 @@ ap-card-number, ap-expiry, ap-cvv, ap-text-field { display: block; }
 .ap-label {
   display: block;
   font-weight: 600;
-  font-size: 1rem;
-  margin-block-end: 0.25rem;
+  font-size: 0.9375rem;
+  margin-block-end: 0.375rem;
 }
 
 .ap-hint {
-  margin: 0 0 0.35rem;
+  margin: 0 0 0.375rem;
   color: var(--ap-muted);
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
 }
 
 .ap-error {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  margin: 0 0 0.35rem;
+  margin: 0 0 0.375rem;
   color: var(--ap-error);
   font-weight: 600;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
 }
 .ap-error[hidden] { display: none; }
 .ap-error-icon {
@@ -77,111 +82,123 @@ ap-card-number, ap-expiry, ap-cvv, ap-text-field { display: block; }
   width: 1.25rem; height: 1.25rem;
   border-radius: 50%;
   background: var(--ap-error);
-  color: var(--ap-bg);
+  color: #ffffff;
   font-size: 0.8rem;
   font-weight: 800;
 }
 
-.ap-input-wrap { position: relative; max-width: 26rem; }
+.ap-input-wrap { position: relative; max-width: 28rem; }
 
 .ap-input {
   box-sizing: border-box;
   width: 100%;
-  min-height: 2.75rem;           /* 44px: comfortable touch target (WCAG 2.5.8 asks 24px min) */
-  padding: 0.5rem 0.75rem;
+  min-height: 3.25rem;           /* 52px */
+  padding: 0.5rem 1rem;
   font: inherit;
-  font-size: 1.125rem;           /* >=16px stops iOS from zooming on focus */
+  font-size: 1.0625rem;          /* >=16px stops iOS zooming on focus */
   letter-spacing: 0.02em;
   color: var(--ap-text);
-  background: var(--ap-bg);
+  background: var(--ap-surface);
   border: 2px solid var(--ap-border);
   border-radius: var(--ap-radius);
   font-variant-numeric: tabular-nums;
 }
-.ap-input--short { max-width: 9rem; }
-ap-card-number .ap-input { padding-inline-end: 9rem; }
+.ap-input:hover { border-color: var(--ap-brand); }
+.ap-input:focus { background: #ffffff; border-color: var(--ap-accent); }
+.ap-input--short { max-width: 10rem; }
+ap-card-number .ap-input { padding-inline-end: 9rem; letter-spacing: 0.06em; }
 
-/* A thick border change, not just colour, marks the error state. */
-.ap-has-error .ap-input { border-color: var(--ap-error); border-width: 3px; }
+/* A thicker border, not just colour, marks the error state. */
+.ap-has-error .ap-input { border-color: var(--ap-error); border-width: 3px; background: var(--ap-bg); }
 
-/* Focus: two-colour ring that works on light, dark and coloured backgrounds (WCAG 2.4.7 / 2.4.11). */
+/* Focus: a solid 3px ring with a gap, 5.5:1 against white (WCAG 2.4.7 / 2.4.11). */
 .ap-input:focus-visible,
 ap-checkout-form button:focus-visible,
+.ap-pay-button:focus-visible,
 .ap-error-summary:focus-visible,
 .ap-error-summary a:focus-visible {
   outline: 3px solid var(--ap-focus);
-  outline-offset: 0;
-  box-shadow: inset 0 0 0 2px var(--ap-focus-inner);
+  outline-offset: 2px;
 }
-.ap-error-summary a:focus-visible { background: var(--ap-focus); color: var(--ap-focus-inner); box-shadow: none; }
 
 .ap-network-badge {
   position: absolute;
-  inset-inline-end: 0.5rem;
+  inset-inline-end: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
-  padding: 0.15rem 0.5rem;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  border-radius: 4px;
-  background: var(--ap-surface);
-  color: var(--ap-text);
-  border: 1px solid var(--ap-border);
+  padding: 0.2rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  border-radius: 6px;
+  background: var(--ap-brand);
+  color: var(--ap-on-brand);
   pointer-events: none;
 }
 .ap-network-badge[hidden] { display: none; }
+.ap-network-badge.has-logo { padding: 0; background: none; }
+.ap-network-badge img { display: block; height: 1.75rem; width: auto; }
 
-.ap-row { display: flex; flex-wrap: wrap; column-gap: 1.5rem; }
+.ap-row { display: flex; flex-wrap: wrap; column-gap: 1rem; }
 
 .ap-error-summary {
   margin-block-end: 1.5rem;
   padding: 1rem 1.25rem;
-  border: 4px solid var(--ap-error);
+  border: 3px solid var(--ap-error);
   border-radius: var(--ap-radius);
+  background: #fff7f6;
 }
 .ap-error-summary[hidden] { display: none; }
-.ap-error-summary__title { margin: 0 0 0.5rem; font-size: 1.25rem; }
+.ap-error-summary__title { margin: 0 0 0.5rem; font-family: var(--ap-display); font-size: 1.25rem; }
 .ap-error-summary__list { margin: 0; padding-inline-start: 1.25rem; }
 .ap-error-summary__list a { color: var(--ap-error); font-weight: 600; }
 
 .ap-pay-button {
-  min-height: 3rem;
-  padding: 0.6rem 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3.5rem;            /* 56px */
+  padding: 0.6rem 1.75rem;
   font: inherit;
+  font-family: var(--ap-display);
   font-size: 1.125rem;
   font-weight: 700;
   color: var(--ap-accent-text);
   background: var(--ap-accent);
-  border: 2px solid transparent;  /* stays visible in Windows High Contrast */
-  border-radius: var(--ap-radius);
+  border: 2px solid transparent; /* stays visible in Windows High Contrast */
+  border-radius: 999px;
   cursor: pointer;
+  text-decoration: none;
 }
-.ap-pay-button:hover { filter: brightness(1.1); }
+.ap-pay-button:hover { background: var(--ap-accent-hover); }
 
 @media (prefers-reduced-motion: no-preference) {
-  .ap-pay-button { transition: filter 0.15s ease; }
-}
-
-/* Windows High Contrast / forced colours: let the system palette win. */
-@media (forced-colors: active) {
-  .ap-error-icon { forced-color-adjust: none; background: CanvasText; color: Canvas; }
-  .ap-has-error .ap-input { border-style: double; border-width: 4px; }
-  .ap-input:focus-visible, ap-checkout-form button:focus-visible { outline: 3px solid Highlight; }
+  .ap-pay-button, .ap-secondary-button, .ap-input {
+    transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .ap-pay-button:hover:not([aria-disabled="true"]) { transform: translateY(-1px); box-shadow: 0 8px 20px rgb(15 118 110 / 0.28); }
+  .ap-pay-button:active:not([aria-disabled="true"]) { transform: translateY(0); box-shadow: none; }
+  .ap-secondary-button:hover { transform: translateY(-1px); }
+  .ap-otp[open] { animation: ap-pop 0.22s ease-out; }
+  /* Slide, not fade: text stays at full contrast during the animation. */
+  @keyframes ap-pop { from { transform: translateY(10px) scale(0.98); } to { transform: none; } }
 }
 
 /* ── Buttons ── */
-.ap-pay-button[aria-disabled="true"] { opacity: 0.75; cursor: progress; }
+.ap-pay-button[aria-disabled="true"] { opacity: 0.8; cursor: progress; }
 .ap-secondary-button {
   min-height: 3rem;
   padding: 0.6rem 1.25rem;
   font: inherit;
   font-weight: 600;
-  color: var(--ap-text);
-  background: transparent;
+  color: var(--ap-brand);
+  background: var(--ap-bg);
   border: 2px solid var(--ap-border);
-  border-radius: var(--ap-radius);
+  border-radius: 999px;
   cursor: pointer;
 }
+.ap-secondary-button:hover { background: var(--ap-surface); }
 .ap-link-button {
   min-height: 2rem;
   padding: 0.25rem 0;
@@ -196,7 +213,7 @@ ap-checkout-form button:focus-visible,
 .ap-secondary-button:focus-visible,
 .ap-link-button:focus-visible {
   outline: 3px solid var(--ap-focus);
-  box-shadow: inset 0 0 0 2px var(--ap-focus-inner);
+  outline-offset: 2px;
 }
 
 /* ── OTP dialog ── */
@@ -204,27 +221,34 @@ ap-checkout-form button:focus-visible,
   width: min(28rem, calc(100vw - 2rem));
   max-height: calc(100vh - 2rem);
   overflow: auto;
-  padding: 1.5rem;
+  padding: 2rem;
   color: var(--ap-text);
   background: var(--ap-bg);
-  border: 2px solid var(--ap-border);
-  border-radius: calc(var(--ap-radius) * 2);
+  border: 0;
+  border-radius: var(--ap-radius-lg);
+  box-shadow: 0 24px 60px rgb(6 59 55 / 0.35);
   font-family: var(--ap-font);
 }
-.ap-otp::backdrop { background: rgb(0 0 0 / 0.6); }
-.ap-otp__title { margin: 0 0 0.5rem; font-size: 1.375rem; }
+.ap-otp::backdrop { background: rgb(6 30 28 / 0.65); }
+.ap-otp__title { margin: 0 0 0.5rem; font-family: var(--ap-display); font-size: 1.5rem; }
 .ap-otp__test {
-  padding: 0.5rem 0.75rem;
-  background: var(--ap-surface);
-  border-left: 4px solid var(--ap-accent);
+  padding: 0.6rem 0.9rem;
+  background: var(--ap-accent-soft);
+  border-radius: var(--ap-radius);
   font-weight: 600;
+  color: var(--ap-brand);
 }
 .ap-otp__test[hidden], .ap-otp__wait[hidden], .ap-link-button[hidden] { display: none; }
-.ap-otp__input { max-width: 13rem; letter-spacing: 0.3em; font-size: 1.375rem; }
+.ap-otp__input { max-width: 14rem; letter-spacing: 0.35em; font-size: 1.375rem; }
 .ap-otp__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
 .ap-otp__resend { margin-top: 1rem; color: var(--ap-muted); }
 .ap-otp__wait { margin: 0; }
 
+/* Windows High Contrast / forced colours: let the system palette win. */
 @media (forced-colors: active) {
+  .ap-error-icon { forced-color-adjust: none; background: CanvasText; color: Canvas; }
+  .ap-has-error .ap-input { border-style: double; border-width: 4px; }
+  .ap-input:focus-visible, ap-checkout-form button:focus-visible, .ap-pay-button:focus-visible { outline: 3px solid Highlight; }
   .ap-otp { border: 2px solid CanvasText; }
+  .ap-network-badge.has-logo img { forced-color-adjust: none; }
 }
