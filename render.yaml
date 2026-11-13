@@ -6,7 +6,9 @@ services:
     name: accesspay
     runtime: node
     plan: free
-    buildCommand: npm ci && npm run build
+    region: singapore   # closest Render region to India; create the Neon database in Singapore too
+    # --include=dev: with NODE_ENV=production npm skips devDependencies, but the build needs Vite.
+    buildCommand: npm ci --include=dev && npm run build
     startCommand: npm start
     healthCheckPath: /healthz
     envVars:
@@ -16,6 +18,5 @@ services:
         value: "22"
       - key: APP_SECRET
         generateValue: true
-      # Optional: set DATABASE_URL to a hosted Postgres (e.g. Neon free tier) to keep
-      # data across restarts. Without it, an in-memory embedded Postgres is used and
-      # the demo data resets whenever the free instance sleeps.
+      - key: DATABASE_URL   # paste your Neon connection string when Render asks
+        sync: false
